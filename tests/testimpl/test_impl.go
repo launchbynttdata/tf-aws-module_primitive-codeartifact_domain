@@ -120,8 +120,8 @@ func tearDownCodeArtifact(t *testing.T, dir string) {
 }
 
 func GetAWSCodeartifactClient(t *testing.T) *codeartifact.Client {
-	ecrClient := codeartifact.NewFromConfig(GetAWSConfig(t))
-	return ecrClient
+	codeartifactClient := codeartifact.NewFromConfig(GetAWSConfig(t))
+	return codeartifactClient
 }
 
 func GetAWSConfig(t *testing.T) (cfg aws.Config) {
