@@ -1,23 +1,26 @@
-package test
+package testimpl
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/codeartifact"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/codeartifact"
 	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	test_structure "github.com/gruntwork-io/terratest/modules/test-structure"
+	"github.com/launchbynttdata/lcaf-component-terratest/types"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 const (
-	base            = "../examples/"
+	base            = "../../examples/"
 	testVarFileName = "/test.tfvars"
 )
 
@@ -25,7 +28,7 @@ var standardTags = map[string]string{
 	"provisioner": "Terraform",
 }
 
-func TestCodeArtifact(t *testing.T) {
+func TestCodeArtifact(t *testing.T, ctx types.TestContext) {
 	t.Parallel()
 	stage := test_structure.RunTestStage
 
@@ -67,11 +70,7 @@ func testCodeArtifact(t *testing.T, dir string) {
 	assert.NotEmpty(t, actualARN, "ARN is empty")
 	assert.Regexp(t, expectedPatternARN, actualARN, "ARN does not match expected pattern")
 
-	sess, err := session.NewSessionWithOptions(session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	})
-	assert.NoError(t, err, "can't connect to aws")
-	client := codeartifact.New(sess)
+	client := GetAWSCodeartifactClient(t)
 	tfvarsFullPath := dir + testVarFileName
 
 	expectedDomainName, err := terraform.GetVariableAsStringFromVarFileE(t, tfvarsFullPath, "domain")
@@ -81,7 +80,7 @@ func testCodeArtifact(t *testing.T, dir string) {
 		Domain: aws.String(expectedDomainName),
 	}
 
-	result, err := client.DescribeDomain(input)
+	result, err := client.DescribeDomain(context.TODO(), input)
 	assert.NoError(t, err, "The expected code artifact domain was not found")
 
 	domain := result.Domain
@@ -91,14 +90,14 @@ func testCodeArtifact(t *testing.T, dir string) {
 	checkTagsMatch(t, tfvarsFullPath, actualARN, client)
 }
 
-func checkTagsMatch(t *testing.T, tfvarsFullPath string, actualARN string, client *codeartifact.CodeArtifact) {
+func checkTagsMatch(t *testing.T, tfvarsFullPath string, actualARN string, client *codeartifact.Client) {
 	expectedTags, err := terraform.GetVariableAsMapFromVarFileE(t, tfvarsFullPath, "tags")
 	assert.NoError(t, err)
 
 	input := &codeartifact.ListTagsForResourceInput{
 		ResourceArn: aws.String(actualARN),
 	}
-	result, err := client.ListTagsForResource(input)
+	result, err := client.ListTagsForResource(context.TODO(), input)
 	assert.NoError(t, err, "Failed to retrieve tags from AWS")
 	// convert AWS Tag[] to map so we can compare
 	actualTags := map[string]string{}
@@ -118,4 +117,15 @@ func tearDownCodeArtifact(t *testing.T, dir string) {
 	terraformOptions := test_structure.LoadTerraformOptions(t, dir)
 	terraformOptions.Logger = logger.Discard
 	terraform.Destroy(t, terraformOptions)
+}
+
+func GetAWSCodeartifactClient(t *testing.T) *codeartifact.Client {
+	ecrClient := codeartifact.NewFromConfig(GetAWSConfig(t))
+	return ecrClient
+}
+
+func GetAWSConfig(t *testing.T) (cfg aws.Config) {
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	require.NoErrorf(t, err, "unable to load SDK config, %v", err)
+	return cfg
 }
