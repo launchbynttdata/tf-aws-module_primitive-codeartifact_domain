@@ -103,19 +103,13 @@ If `make check` target is successful, developer is good to commit the code to pr
 - runs `conftests`. `conftests` make sure `policy` checks are successful.
 - runs `terratest`. This is integration test suit.
 - runs `opa` tests
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
-
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.73.0 |
 
 ## Modules
 
@@ -139,11 +133,11 @@ No modules.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | The ARN of the Domain. |
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the Domain. |
+| <a name="output_asset_size_bytes"></a> [asset\_size\_bytes](#output\_asset\_size\_bytes) | The total size of all assets in the domain. |
+| <a name="output_created_time"></a> [created\_time](#output\_created\_time) | A timestamp that represents the date and time the domain was created in RFC3339 format. |
+| <a name="output_id"></a> [id](#output\_id) | The ARN of the Domain. |
 | <a name="output_owner"></a> [owner](#output\_owner) | The AWS account ID that owns the domain. |
 | <a name="output_repository_count"></a> [repository\_count](#output\_repository\_count) | The number of repositories in the domain. |
-| <a name="output_created_time"></a> [created\_time](#output\_created\_time) | A timestamp that represents the date and time the domain was created in RFC3339 format. |
-| <a name="output_asset_size_bytes"></a> [asset\_size\_bytes](#output\_asset\_size\_bytes) | The total size of all assets in the domain. |
 | <a name="output_tags_all"></a> [tags\_all](#output\_tags\_all) | A map of tags assigned to the resource, including those inherited from the provider default\_tags configuration block. |
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+<!-- END_TF_DOCS -->

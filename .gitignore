@@ -1,9 +1,10 @@
+.DS_Store
+Thumbs.db
+
 terraform.*
 .repo/
 components/
 .semverbot.toml
-.tflint.hcl
-.golangci.yaml
 
 .idea
 !examples/*.tfvars
@@ -56,11 +57,6 @@ terraform.rc
 # Files from common modules
 azure_env.sh
 .releaserc.json
-.tflint.hcl
-
-# Pre-commit hook
-.pre-commit-config.yaml
 
 # VS Code
 .vscode/
-.devcontainer/
