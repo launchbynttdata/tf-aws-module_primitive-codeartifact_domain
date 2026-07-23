@@ -33,5 +33,5 @@ func TestCodeartifactDomainModule(t *testing.T) {
 		SetTestConfigFileName(infraTFVarFileNameDefault).
 		Build()
 
-	lib.RunNonDestructiveTest(t, *ctx, testimpl.TestCodeArtifact)
+	lib.RunNonDestructiveTest(t, *ctx, testimpl.TestComposableCodeArtifact)
 }

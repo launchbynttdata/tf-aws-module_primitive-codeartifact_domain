@@ -28,7 +28,7 @@ var standardTags = map[string]string{
 	"provisioner": "Terraform",
 }
 
-func TestCodeArtifact(t *testing.T, ctx types.TestContext) {
+func TestComposableCodeArtifact(t *testing.T, ctx types.TestContext) {
 	t.Parallel()
 	stage := test_structure.RunTestStage
 
