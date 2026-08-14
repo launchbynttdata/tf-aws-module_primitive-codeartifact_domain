@@ -56,7 +56,7 @@ func setupCodeArtifactTest(t *testing.T, dir string) {
 
 	test_structure.SaveTerraformOptions(t, dir, terraformOptions)
 
-	terraform.InitAndApply(t, terraformOptions)
+	terraform.InitAndApplyContext(t, context.Background(), terraformOptions)
 
 }
 
@@ -66,7 +66,7 @@ func testCodeArtifact(t *testing.T, dir string) {
 
 	expectedPatternARN := "^arn:aws:codeartifact:[a-z0-9-]+:[0-9]{12}:[a-z0-9-]+"
 
-	actualARN := terraform.Output(t, terraformOptions, "arn")
+	actualARN := terraform.OutputContext(t, context.Background(), terraformOptions, "arn")
 	assert.NotEmpty(t, actualARN, "ARN is empty")
 	assert.Regexp(t, expectedPatternARN, actualARN, "ARN does not match expected pattern")
 
@@ -116,7 +116,7 @@ func checkTagsMatch(t *testing.T, tfvarsFullPath string, actualARN string, clien
 func tearDownCodeArtifact(t *testing.T, dir string) {
 	terraformOptions := test_structure.LoadTerraformOptions(t, dir)
 	terraformOptions.Logger = logger.Discard
-	terraform.Destroy(t, terraformOptions)
+	terraform.DestroyContext(t, context.Background(), terraformOptions)
 }
 
 func GetAWSCodeartifactClient(t *testing.T) *codeartifact.Client {
